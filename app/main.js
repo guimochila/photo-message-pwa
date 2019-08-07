@@ -39,8 +39,88 @@
     }
   }
 
+  class Message {
+    constructor() {
+      this.messages = [];
+      this.socket = io();
+      // Handle connection error
+      this.socket.once('connect_error', () => {
+        global.dispatchEvent(new Event('messages_error'));
+      });
+
+      this.socket.once('reconnect', () => {
+        global.dispatchEvent(new Event('messages_reconnected'));
+      });
+
+      this.socket.on('all_messages', messages => {
+        this.messages = messages;
+
+        global.dispatchEvent(new Event('messages_ready'));
+      });
+
+      // Listen new message from server
+      this.socket.on('new_message', message => {
+        this.messages.unshift(message);
+
+        global.dispatchEvent(
+          new CustomEvent('new_message', { detail: message }),
+        );
+      });
+    }
+
+    get all() {
+      return this.messages;
+    }
+
+    add(photo, caption) {
+      const message = {
+        photo,
+        caption,
+      };
+
+      this.messages.unshift(message);
+
+      // Emit to server
+      this.socket.emit('new_message', message);
+
+      return message;
+    }
+  }
+
   function _init() {
     const camera = new Camera(document.getElementById('player'));
+    const messages = new Message();
+
+    // Notify user of connection errors
+    global.addEventListener('messages_error', () => {
+      toastr.error(
+        'Messages could not be retreived.<br> Will keep trying.',
+        'Network Connection Error',
+      );
+    });
+
+    global.addEventListener('messages_reconnected', () => {
+      toastr.success(
+        'Connection with server successful',
+        'Network connection success',
+      );
+    });
+
+    global.addEventListener('new_message', e => {
+      renderMessage(e.detail);
+    });
+
+    global.addEventListener('messages_ready', e => {
+      $('#loader').remove();
+
+      if (messages.all.length === 0) {
+        toastr.info('Add the first message.', 'No messages');
+      }
+
+      $('#messages').empty();
+
+      messages.all.reverse().forEach(renderMessage);
+    });
 
     $('#viewfinder').on('show.bs.modal', () => onCameraShow(camera));
     $('#viewfinder').on('hidden.bs.modal', () => onCameraHide(camera));
@@ -75,7 +155,8 @@
       }
 
       // Render new message;
-      renderMessage({ photo: camera.photo, caption });
+      const message = messages.add(camera.photo, caption);
+      renderMessage(message);
 
       $('#caption').val('');
       $('#camera')
