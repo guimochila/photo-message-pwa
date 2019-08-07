@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <title>Photo Message</title>
+
+    <link
+      rel="stylesheet"
+      href="/modules/bootstrap/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="/modules/toastr/build/toastr.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+      integrity="sha256-UzFD2WYH2U1dQpKDjjZK72VtPeWP50NoJjd26rnAdUI="
+      crossorigin="anonymous"
+    />
+
+    <style media="screen">
+      #toast-container {
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+      }
+
+      #toast-container > div {
+        opacity: 1;
+        box-shadow: 0 0 2rem rgba(0, 0, 0, 0.75);
+        border-radius: 0;
+        width: 100%;
+      }
+
+      #camera.with-photo {
+        color: transparent !important;
+        background-size: cover;
+      }
+    </style>
+  </head>
+  <body class="bg-info">
+    <main class="p-2">
+      <div class="container-fluid" id="messages">
+        <div
+          id="loader"
+          class="text-center text-light"
+          style="margin-top:10rem;"
+        >
+          <i class="fas fa-spinner fa-2x fa-pulse"></i>
+          <p>Loading Messages...</p>
+        </div>
+      </div>
+    </main>
+
+    <div class="container-fluid fixed-bottom">
+      <div id="toolbar" class="row bg-dark">
+        <div class="col p-2 d-flex">
+          <button
+            data-toggle="modal"
+            data-target="#viewfinder"
+            id="camera"
+            class="fas fa-camera fa-lg px-3 mr-2 text-light border-light bg-dark rounded-circle"
+          ></button>
+          <textarea
+            placeholder="Image Caption"
+            id="caption"
+            maxlength="120"
+            class="flex-grow-1 w-100 rounded border-light align-middle pr-5"
+            style="resize: none;"
+          ></textarea>
+          <a
+            id="send"
+            style="right:1.25rem; bottom:1.25rem; padding: 0.5rem;"
+            class="fas fa-paper-plane fa-lg position-absolute text-dark"
+          ></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Camera Modal -->
+    <div
+      id="viewfinder"
+      class="modal fade"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog fixed-bottom" role="document">
+        <div class="modal-content bg-dark">
+          <div class="modal-body p-1 text-center">
+            <video id="player" autoplay class="w-100 rounded"></video>
+            <button
+              data-dismiss="modal"
+              type="button"
+              id="shutter"
+              class="fas fa-circle fa-3x rounded-circle bg-white text-danger p-1 my-2"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photo Modal -->
+    <div
+      class="modal fade"
+      id="photoframe"
+      tabindex="-1"
+      role="dialog"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body p-1">
+            <img src="" class="w-100 rounded" data-dismiss="modal" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/modules/jquery/dist/jquery.min.js"></script>
+    <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/modules/toastr/build/toastr.min.js"></script>
+    <script src="/main.js"></script>
+
+    <!-- Init App if supported -->
+    <script>
+      if ('mediaDevices' in navigator) {
+        // Init App
+        _init();
+      } else {
+        toastr.error(null, 'This app is not supported by your browser', {
+          timeout: 30000,
+        });
+      }
+    </script>
+  </body>
+</html>
