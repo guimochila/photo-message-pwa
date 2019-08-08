@@ -20,8 +20,8 @@ io.on('connection', socket => {
 });
 
 // Static content
-app.use(express.static(path.join(__dirname, '..', 'app')));
-app.use('/modules', express.static(path.join(__dirname, '..', 'node_modules')));
+app.use(express.static(path.join(__dirname, '../../build')));
+app.use('/modules', express.static(path.join(__dirname, '../../node_modules')));
 
 // Start server
 const port = process.env.PORT || 8000;

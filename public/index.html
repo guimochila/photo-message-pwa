@@ -120,18 +120,9 @@
       </div>
     </div>
 
-    <script src="/modules/jquery/dist/jquery.min.js"></script>
-    <script src="/modules/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/modules/toastr/build/toastr.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/main.js"></script>
-
     <!-- Init App if supported -->
     <script>
       if ('mediaDevices' in navigator) {
-        // Init App
-        _init();
-
         // Register SW if supported
         if ('serviceWorker' in navigator) {
           window.addEventListener('load', () => {
